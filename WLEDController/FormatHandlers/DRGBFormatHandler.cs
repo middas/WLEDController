@@ -1,4 +1,6 @@
-﻿namespace WLEDController.FormatHandlers
+﻿using WLEDController.Exceptions;
+
+namespace WLEDController.FormatHandlers
 {
     internal sealed class DRGBFormatHandler : UdpClientBase
     {
@@ -12,7 +14,7 @@
         {
             if (leds.Length > maxLeds || leds.Max(x => x.Index) > maxLeds)
             {
-                throw new Exception();
+                throw new WLEDClientException($"The number of LEDs ({Math.Max(leds.Max(x => x.Index), leds.Length)}) is greater than the maximum number allowed for this format ({maxLeds}).");
             }
 
             byte[] data = new byte[(leds.Max(x => x.Index) * 3) + 4];

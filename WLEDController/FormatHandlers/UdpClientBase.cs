@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using WLEDController.Exceptions;
 
 namespace WLEDController.FormatHandlers
 {
@@ -58,14 +59,9 @@ namespace WLEDController.FormatHandlers
 
         protected int Send(ReadOnlySpan<byte> data)
         {
-            if (udpClient is null)
+            if (udpClient is null || !udpClient.Client.Connected)
             {
-                throw new Exception();
-            }
-
-            if (!udpClient.Client.Connected)
-            {
-                throw new Exception();
+                throw new WLEDClientException("The UDPClient is not connected.");
             }
 
             return udpClient.Send(data);
@@ -75,7 +71,7 @@ namespace WLEDController.FormatHandlers
         {
             if (udpClient is null || !udpClient.Client.Connected)
             {
-                throw new Exception();
+                throw new WLEDClientException("The UDPClient is not connected.");
             }
 
             return udpClient.Send(data);

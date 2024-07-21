@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using WLEDController.Exceptions;
 using WLEDController.FormatHandlers;
 
 namespace WLEDController
@@ -70,7 +71,7 @@ namespace WLEDController
         {
             if (formatHandler is null)
             {
-                throw new Exception();
+                throw new WLEDClientException("The client has not been connected.");
             }
 
             return formatHandler.SendLEDs(leds, time);
