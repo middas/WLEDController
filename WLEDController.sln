@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34322.80
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WLEDController", "WLEDController\WLEDController.csproj", "{D4599DB3-EAB3-4FF2-B641-F79E25B08F87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WLEDController.UI", "WLEDController.UI\WLEDController.UI.csproj", "{5FC6203D-5DCE-4B2E-8352-65F9D3EA99C5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D4599DB3-EAB3-4FF2-B641-F79E25B08F87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4599DB3-EAB3-4FF2-B641-F79E25B08F87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4599DB3-EAB3-4FF2-B641-F79E25B08F87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4599DB3-EAB3-4FF2-B641-F79E25B08F87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FC6203D-5DCE-4B2E-8352-65F9D3EA99C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FC6203D-5DCE-4B2E-8352-65F9D3EA99C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FC6203D-5DCE-4B2E-8352-65F9D3EA99C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FC6203D-5DCE-4B2E-8352-65F9D3EA99C5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {76D93BC4-B74E-423F-AF04-5C0DC26E0117}
+	EndGlobalSection
+EndGlobal
