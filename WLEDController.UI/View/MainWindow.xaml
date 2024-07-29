@@ -4,18 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WLEDController.UI.View"
-        xmlns:Model="clr-namespace:WLEDController.UI.Model" x:Class="WLEDController.UI.View.MainWindow"
+        xmlns:Model="clr-namespace:WLEDController.UI.ModelView" x:Class="WLEDController.UI.View.MainWindow"
         xmlns:mvvm="clr-namespace:WLEDController.UI.Mvvm"
-        xmlns:m="clr-namespace:WLEDController.UI.Model"
+        xmlns:m="clr-namespace:WLEDController.UI.ModelView"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Window.DataContext>
-        <Model:MainWindowView/>
+        <Model:MainWindowView />
     </Window.DataContext>
     <Window.Resources>
         <mvvm:InvertBooleanConverter x:Key="InvertBooleanConverter" />
         <mvvm:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
-        
 
         <Style TargetType="{x:Type Button}">
             <Setter Property="Padding" Value="10 5" />
@@ -23,8 +22,8 @@
         </Style>
     </Window.Resources>
     <StackPanel Margin="10">
-        <Label Content="URL"/>
-        <TextBox Text="{Binding Url}"/>
+        <Label Content="URL" />
+        <TextBox Text="{Binding Url}" />
         <Label>Text</Label>
         <TextBox Text="{Binding Text}" />
         <Label Content="Delay (ms)" />

@@ -4,6 +4,5 @@
              xmlns:local="clr-namespace:WLEDController.UI"
              StartupUri="View/MainWindow.xaml">
     <Application.Resources>
-         
     </Application.Resources>
 </Application>

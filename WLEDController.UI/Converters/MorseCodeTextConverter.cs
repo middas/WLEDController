@@ -1,58 +1,61 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WLEDController.UI.Converters
+﻿namespace WLEDController.UI.Converters
 {
     internal class MorseCodeTextConverter : ITextConverter
     {
+        private static readonly bool[] dash = [.. dash];
+        private static readonly bool dot = true;
+
         private static readonly Dictionary<char, bool[]> morseCodeLookup = new()
         {
-            {'A', [true, false, true, true, true] },
-            {'B', [true, true, true, false, true, false, true, false, true] },
-            {'C', [true, true, true, false, true, false, true, true, true, false, true] },
-            {'D', [true, true, true, false, true, false, true] },
-            {'E', [true] },
-            {'F', [true, false, true, false, true, true, true, false, true] },
-            {'G', [true, true, true, false, true, true, true, false, true] },
-            {'H', [true, false, true, false, true, false, true] },
-            {'I', [true, false, true] },
-            {'J', [true, false, true, true, true, false, true, true, true, false, true, true, true] },
-            {'K', [true, true, true, false, true, false, true, true, true] },
-            {'L', [true, false, true, true, true, false, true, false, true] },
-            {'M', [true, true, true, false, true, true, true] },
-            {'N', [true, true, true, false, true] },
-            {'O', [true, true, true, false, true, true, true, false, true, true, true] },
-            {'P', [true, false, true, true, true, false, true, true, true, false, true] },
-            {'Q', [true, true, true, false, true, true, true, false, true, false, true, true, true] },
-            {'R', [true, false, true, true, true, false, true] },
-            {'S', [true, false, true, false, true] },
-            {'T', [true, true, true] },
-            {'U', [true, false, true, false, true, true, true] },
-            {'V', [true, false, true, false, true, false, true, true, true] },
-            {'W', [true, false, true, true, true, false, true, true, true] },
-            {'X', [true, true, true, false, true, false, true, false, true, true, true] },
-            {'Y', [true, true, true, false, true, false, true, true, true, false, true, true, true] },
-            {'Z', [true, true, true, false, true, true, true, false, true, false, true] },
-            {'0', [true, true, true, false, true, true, true, false, true, true, true, false, true, true, true, false, true, true, true] },
-            {'1', [true, false, true, true, true, false, true, true, true, false, true, true, true, false, true, true, true] },
-            {'2', [true, false, true, false, true, true, true, false, true, true, true, false, true, true, true] },
-            {'3', [true, false, true, false, true, false, true, true, true, false, true, true, true] },
-            {'4', [true, false, true, false, true, false, true, false, true, true, true] },
-            {'5', [true, false, true, false, true, false, true, false, true] },
-            {'6', [true, true, true, false, true, false, true, false, true, false, true] },
-            {'7', [true, true, true, false, true, true, true, false, true, false, true, false, true] },
-            {'8', [true, true, true, false, true, true, true, false, true, true, true, false, true, false, true] },
-            {'9', [true, true, true, false, true, true, true, false, true, true, true, false, true, true, true, false, true] },
-            {' ', [false, false, false, false, false, false, false] }
+            {'A', [dot, s, ..dash] },
+            {'B', [..dash, s, dot, s, dot, s, dot] },
+            {'C', [..dash, s, dot, s, ..dash, s, dot] },
+            {'D', [..dash, s, dot, s, dot] },
+            {'E', [dot] },
+            {'F', [dot, s, dot, s, ..dash, s, dot] },
+            {'G', [..dash, s, ..dash, s, dot] },
+            {'H', [dot, s, dot, s, dot, s, dot] },
+            {'I', [dot, s, dot] },
+            {'J', [dot, s, ..dash, s, ..dash, s, ..dash] },
+            {'K', [..dash, s, dot, s, ..dash] },
+            {'L', [dot, s, ..dash, s, dot, s, dot] },
+            {'M', [..dash, s, ..dash] },
+            {'N', [..dash, s, dot] },
+            {'O', [..dash, s, ..dash, s, ..dash] },
+            {'P', [dot, s, ..dash, s, ..dash, s, dot] },
+            {'Q', [..dash, s, ..dash, s, dot, s, ..dash] },
+            {'R', [dot, s, ..dash, s, dot] },
+            {'S', [dot, s, dot, s, dot] },
+            {'T', [..dash] },
+            {'U', [dot, s, dot, s, ..dash] },
+            {'V', [dot, s, dot, s, dot, s, ..dash] },
+            {'W', [dot, s, ..dash, s, ..dash] },
+            {'X', [..dash, s, dot, s, dot, s, ..dash] },
+            {'Y', [..dash, s, dot, s, ..dash, s, ..dash] },
+            {'Z', [..dash, s, ..dash, s, dot, s, dot] },
+            {'0', [..dash, s, ..dash, s, ..dash, s, ..dash, s, ..dash] },
+            {'1', [dot, s, ..dash, s, ..dash, s, ..dash, s, ..dash] },
+            {'2', [dot, s, dot, s, ..dash, s, ..dash, s, ..dash] },
+            {'3', [dot, s, dot, s, dot, s, ..dash, s, ..dash] },
+            {'4', [dot, s, dot, s, dot, s, dot, s, ..dash] },
+            {'5', [dot, s, dot, s, dot, s, dot, s, dot] },
+            {'6', [..dash, s, dot, s, dot, s, dot, s, dot] },
+            {'7', [..dash, s, ..dash, s, dot, s, dot, s, dot] },
+            {'8', [..dash, s, ..dash, s, ..dash, s, dot, s, dot] },
+            {'9', [..dash, s, ..dash, s, ..dash, s, ..dash, s, dot] },
+            {' ', [s, s, s, s, s, s, s] }
         };
 
-        private static bool[] letterSpacing = [false, false, false];
+        private static readonly bool s = false;
+        private static bool[] letterSpacing = [s, s, s];
 
         public bool[] ConvertText(string value)
         {
+            if (value[0] == (char)255)
+            {
+                return [.. dash, .. dash, dot, dot];
+            }
+
             return value.ToUpperInvariant().Select(x =>
             {
                 if (morseCodeLookup.TryGetValue(x, out bool[]? v))

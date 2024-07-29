@@ -2,12 +2,11 @@
 using System.Drawing;
 using System.Net;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Windows.Input;
 using WLEDController.UI.Converters;
 using WLEDController.UI.Mvvm;
 
-namespace WLEDController.UI.Model
+namespace WLEDController.UI.ModelView
 {
     public enum TextConverter
     {
@@ -19,7 +18,7 @@ namespace WLEDController.UI.Model
     {
         private CancellationTokenSource? cancellationTokenSource;
         private WLEDClient? client = null;
-        private int delay = 200;
+        private int delay = 100;
         private int numberOfLights = 149;
         private bool startEnabled = true;
         private string text = string.Empty;
@@ -31,6 +30,7 @@ namespace WLEDController.UI.Model
         public int Delay
         {
             get => delay;
+
             set
             {
                 delay = value;
@@ -41,6 +41,7 @@ namespace WLEDController.UI.Model
         public int NumberOfLights
         {
             get => numberOfLights;
+
             set
             {
                 numberOfLights = value;
@@ -55,6 +56,7 @@ namespace WLEDController.UI.Model
         public bool StartEnabled
         {
             get => startEnabled;
+
             set
             {
                 startEnabled = value;
@@ -65,6 +67,7 @@ namespace WLEDController.UI.Model
         public string Text
         {
             get => text;
+
             set
             {
                 text = value;
@@ -75,6 +78,7 @@ namespace WLEDController.UI.Model
         public TextConverter TextConverter
         {
             get => textConverter;
+
             set
             {
                 textConverter = value;
@@ -85,6 +89,7 @@ namespace WLEDController.UI.Model
         public string Url
         {
             get => url;
+
             set
             {
                 url = value;
@@ -112,7 +117,7 @@ namespace WLEDController.UI.Model
                 client.Connect(Format.DRGBW, Url);
             }
 
-            Task.Run(async () =>
+            _ = Task.Run(async () =>
             {
                 LED[] leds = new LED[NumberOfLights];
 
@@ -122,7 +127,7 @@ namespace WLEDController.UI.Model
                 }
 
                 string[] words = Text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                List<WordMap> letterMaps = [new WordMap(((char)255).ToString(), Color.Teal, new BinaryTextConverter())];
+                List<WordMap> wordMaps = [new WordMap(((char)255).ToString(), Color.Teal, new BinaryTextConverter())];
                 Random random = new();
 
                 ITextConverter converter = TextConverter switch
@@ -135,14 +140,14 @@ namespace WLEDController.UI.Model
                 foreach (string word in words)
                 {
                     Color color = Color.FromArgb(random.Next(256), random.Next(256), random.Next(256));
-                    letterMaps.Add(new(word, color, converter));
+                    wordMaps.Add(new(word, color, converter));
 
-                    letterMaps.Add(new(" ", Color.Black, converter));
+                    wordMaps.Add(new(" ", Color.Black, converter));
                 }
 
-                BinaryColorMap[] binaryColorMaps = letterMaps.SelectMany(x => x.GetBinaryColorMaps()).ToArray();
+                LightColorMap[] binaryColorMaps = wordMaps.SelectMany(x => x.GetLightColorMaps()).ToArray();
 
-                long loopCount = (binaryColorMaps.Length) + NumberOfLights;
+                long loopCount = binaryColorMaps.Length + NumberOfLights;
 
                 while (!cancellationTokenSource.IsCancellationRequested)
                 {
@@ -170,9 +175,9 @@ namespace WLEDController.UI.Model
                                     continue;
                                 }
 
-                                leds[i].Red = binaryColorMaps[binaryColorIndex].BinaryValue ? binaryColorMaps[binaryColorIndex].Color.R : (byte)0;
-                                leds[i].Green = binaryColorMaps[binaryColorIndex].BinaryValue ? binaryColorMaps[binaryColorIndex].Color.G : (byte)0;
-                                leds[i].Blue = binaryColorMaps[binaryColorIndex].BinaryValue ? binaryColorMaps[binaryColorIndex].Color.B : (byte)0;
+                                leds[i].Red = binaryColorMaps[binaryColorIndex].OnValue ? binaryColorMaps[binaryColorIndex].Color.R : (byte)0;
+                                leds[i].Green = binaryColorMaps[binaryColorIndex].OnValue ? binaryColorMaps[binaryColorIndex].Color.G : (byte)0;
+                                leds[i].Blue = binaryColorMaps[binaryColorIndex].OnValue ? binaryColorMaps[binaryColorIndex].Color.B : (byte)0;
 
                                 binaryColorIndex++;
                             }
@@ -182,7 +187,7 @@ namespace WLEDController.UI.Model
                             }
                         }
 
-                        client.Send(leds);
+                        _ = client.Send(leds);
                         await Task.Delay(Delay);
                     }
                 }
@@ -197,17 +202,17 @@ namespace WLEDController.UI.Model
             StartEnabled = true;
         }
 
-        private struct BinaryColorMap
+        private readonly struct LightColorMap
         {
-            public BinaryColorMap(Color color, bool binaryValue)
+            public LightColorMap(Color color, bool onValue)
             {
                 Color = color;
-                BinaryValue = binaryValue;
+                OnValue = onValue;
             }
 
-            public bool BinaryValue { get; }
-
             public Color Color { get; }
+
+            public bool OnValue { get; }
         }
 
         private class WordMap
@@ -217,18 +222,18 @@ namespace WLEDController.UI.Model
                 Word = word;
                 Color = color;
 
-                BinaryValue = textConverter.ConvertText(word);
+                LightValue = textConverter.ConvertText(word);
             }
-
-            public bool[] BinaryValue { get; }
 
             public Color Color { get; }
 
+            public bool[] LightValue { get; }
+
             public string Word { get; }
 
-            public IEnumerable<BinaryColorMap> GetBinaryColorMaps()
+            public IEnumerable<LightColorMap> GetLightColorMaps()
             {
-                foreach (bool b in BinaryValue)
+                foreach (bool b in LightValue)
                 {
                     yield return new(Color, b);
                 }
