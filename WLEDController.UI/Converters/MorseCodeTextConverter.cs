@@ -63,25 +63,16 @@ namespace WLEDController.UI.Converters
         };
 
         private static readonly bool s = false;
-        private static bool[] letterSpacing = [s, s, s];
+        private static readonly bool[] letterSpacing = [s, s, s];
 
         public BitArray ConvertText(string value)
         {
-            if (value[0] == (char)255)
-            {
-                return new BitArray([..dash, s, dot, s, ..dash, s, dot, s, ..dash]);
-            }
-
             return new BitArray(value.ToUpperInvariant().Select(x =>
             {
-                if (morseCodeLookup.TryGetValue(x, out bool[]? v))
-                {
-                    return v;
-                }
-                return [];
+                return morseCodeLookup.TryGetValue(x, out bool[]? v) ? v : ([]);
             }).Aggregate(Array.Empty<bool>(), (cur, next) =>
             {
-                var list = cur.ToList();
+                List<bool> list = cur.ToList();
                 if (list.Count > 0)
                 {
                     list.AddRange(letterSpacing);
@@ -89,6 +80,11 @@ namespace WLEDController.UI.Converters
                 list.AddRange(next);
                 return [.. list];
             }));
+        }
+
+        public BitArray Start()
+        {
+            return new BitArray([.. dash, s, dot, s, .. dash, s, dot, s, .. dash, .. morseCodeLookup[' ']]);
         }
     }
 }

@@ -12,11 +12,6 @@ namespace WLEDController.UI.Converters
                 return new BitArray(8, false);
             }
 
-            if (value[0] == 255)
-            {
-                return new BitArray(8, true);
-            }
-
             string binaryString = Encoding.UTF8.GetBytes(value).Select(x => Convert.ToString(x, 2).PadLeft(8, '0')).Aggregate("", (cur, next) => cur += next);
             bool[] binaryValue = new bool[value.Length * 8];
 
@@ -26,6 +21,11 @@ namespace WLEDController.UI.Converters
             }
 
             return new BitArray(binaryValue);
+        }
+
+        public BitArray Start()
+        {
+            return new BitArray(8, true);
         }
     }
 }

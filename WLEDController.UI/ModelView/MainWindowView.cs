@@ -5,6 +5,7 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using WLEDController.UI.Converters;
+using WLEDController.UI.Extensions;
 using WLEDController.UI.Mvvm;
 
 namespace WLEDController.UI.ModelView
@@ -135,7 +136,7 @@ namespace WLEDController.UI.ModelView
                 };
 
                 string[] words = Text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                List<WordMap> wordMaps = [new WordMap(((char)255).ToString(), Color.Teal, converter)];
+                List<WordMap> wordMaps = [];
                 Random random = new();
 
                 foreach (string word in words)
@@ -146,7 +147,7 @@ namespace WLEDController.UI.ModelView
                     wordMaps.Add(new(" ", Color.Black, converter));
                 }
 
-                LightColorMap[] binaryColorMaps = wordMaps.SelectMany(x => x.GetLightColorMaps()).ToArray();
+                LightColorMap[] binaryColorMaps = [.. converter.Start().Select(x => new LightColorMap(Color.Teal, x)), .. wordMaps.SelectMany(x => x.GetLightColorMaps())];
 
                 long loopCount = binaryColorMaps.Length + NumberOfLights;
 
@@ -224,6 +225,11 @@ namespace WLEDController.UI.ModelView
                 {
                     yield return new(Color, b);
                 }
+            }
+
+            public override string ToString()
+            {
+                return $"{Word} ({Color})";
             }
         }
     }

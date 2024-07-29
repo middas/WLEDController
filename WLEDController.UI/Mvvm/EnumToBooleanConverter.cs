@@ -8,12 +8,16 @@ namespace WLEDController.UI.Mvvm
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string parameterString = parameter.ToString();
+            string parameterString = parameter.ToString() ?? string.Empty;
             if (parameterString == null)
+            {
                 return DependencyProperty.UnsetValue;
+            }
 
             if (Enum.IsDefined(value.GetType(), value) == false)
+            {
                 return DependencyProperty.UnsetValue;
+            }
 
             object parameterValue = Enum.Parse(value.GetType(), parameterString);
 
@@ -22,11 +26,8 @@ namespace WLEDController.UI.Mvvm
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string parameterString = parameter.ToString();
-            if (parameterString == null)
-                return DependencyProperty.UnsetValue;
-
-            return Enum.Parse(targetType, parameterString);
+            string parameterString = parameter.ToString() ?? string.Empty;
+            return parameterString == null ? DependencyProperty.UnsetValue : Enum.Parse(targetType, parameterString);
         }
     }
 }
