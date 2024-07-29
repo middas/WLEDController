@@ -209,6 +209,11 @@ namespace WLEDController.UI.ModelView
             public Color Color { get; } = color;
 
             public bool OnValue { get; } = onValue;
+
+            public override string ToString()
+            {
+                return $"({Color}) {(OnValue ? "On" : "Off")}";
+            }
         }
 
         private class WordMap(string word, Color color, ITextConverter textConverter)
