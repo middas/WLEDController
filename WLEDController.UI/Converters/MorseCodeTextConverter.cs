@@ -43,7 +43,21 @@
             {'7', [..dash, s, ..dash, s, dot, s, dot, s, dot] },
             {'8', [..dash, s, ..dash, s, ..dash, s, dot, s, dot] },
             {'9', [..dash, s, ..dash, s, ..dash, s, ..dash, s, dot] },
-            {' ', [s, s, s, s, s, s, s] }
+            {' ', [s, s, s, s, s, s, s] },
+            {',', [..dash, s, ..dash, s, dot, s, dot, s, ..dash, s, ..dash] },
+            {'?', [dot, s, dot, s, ..dash, s, ..dash, s, dot, s, dot] },
+            {':', [..dash, s, ..dash, s, ..dash, s, dot, s, dot, s, dot] },
+            {'-', [..dash, s, dot, s, dot, s, dot, s, dot, s, ..dash] },
+            {'"', [dot, s, ..dash, s, dot, s, dot, s, ..dash, s, dot] },
+            {'(', [..dash, s, dot, s, ..dash, s, ..dash, s, dot] },
+            {'=', [..dash, s, dot, s, dot, s, dot, s, ..dash] },
+            {'.', [dot, s, ..dash, s, dot, s, ..dash, s, dot, s, ..dash] },
+            {'/', [..dash, s, dot, s, dot, s, ..dash, s, dot] },
+            {'\'', [dot, s, ..dash, s, ..dash, s, ..dash, s, ..dash, s, dot] },
+            {'_', [dot, s, dot, s, ..dash, s, ..dash, s, dot, s, ..dash] },
+            {')', [..dash, s, dot, s, ..dash, s, ..dash, s, dot, s, ..dash] },
+            {'+', [dot, s, ..dash, s, dot, s, ..dash, s, dot] },
+            {'@', [dot, s, ..dash, s, ..dash, s, dot, s, ..dash, s, dot] }
         };
 
         private static readonly bool s = false;
@@ -53,7 +67,7 @@
         {
             if (value[0] == (char)255)
             {
-                return [.. dash, .. dash, dot, dot];
+                return [..dash, s, dot, s, ..dash, s, dot, s, ..dash];
             }
 
             return value.ToUpperInvariant().Select(x =>
