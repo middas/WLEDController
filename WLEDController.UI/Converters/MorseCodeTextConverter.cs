@@ -72,7 +72,7 @@ namespace WLEDController.UI.Converters
                 return morseCodeLookup.TryGetValue(x, out bool[]? v) ? v : ([]);
             }).Aggregate(Array.Empty<bool>(), (cur, next) =>
             {
-                List<bool> list = cur.ToList();
+                List<bool> list = [.. cur];
                 if (list.Count > 0)
                 {
                     list.AddRange(letterSpacing);
