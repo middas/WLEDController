@@ -4,10 +4,17 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Input;
+using WLEDController.UI.Converters;
 using WLEDController.UI.Mvvm;
 
 namespace WLEDController.UI.Model
 {
+    public enum TextConverter
+    {
+        Binary,
+        MorseCode
+    }
+
     internal sealed class MainWindowView : INotifyPropertyChanged
     {
         private CancellationTokenSource? cancellationTokenSource;
@@ -16,6 +23,7 @@ namespace WLEDController.UI.Model
         private int numberOfLights = 149;
         private bool startEnabled = true;
         private string text = string.Empty;
+        private TextConverter textConverter = TextConverter.Binary;
         private string url = "192.168.2.51";
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -64,6 +72,16 @@ namespace WLEDController.UI.Model
             }
         }
 
+        public TextConverter TextConverter
+        {
+            get => textConverter;
+            set
+            {
+                textConverter = value;
+                OnValueChanged();
+            }
+        }
+
         public string Url
         {
             get => url;
@@ -104,19 +122,22 @@ namespace WLEDController.UI.Model
                 }
 
                 string[] words = Text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                List<LetterMap> letterMaps = [new LetterMap('\0', 255, Color.Teal)];
+                List<WordMap> letterMaps = [new WordMap(((char)255).ToString(), Color.Teal, new BinaryTextConverter())];
                 Random random = new();
+
+                ITextConverter converter = TextConverter switch
+                {
+                    TextConverter.Binary => new BinaryTextConverter(),
+                    TextConverter.MorseCode => new MorseCodeTextConverter(),
+                    _ => throw new NotImplementedException()
+                };
 
                 foreach (string word in words)
                 {
                     Color color = Color.FromArgb(random.Next(256), random.Next(256), random.Next(256));
-                    byte[] bytes = Encoding.UTF8.GetBytes(word);
-                    for (int i = 0; i < bytes.Length; i++)
-                    {
-                        letterMaps.Add(new(word[i], bytes[i], color));
-                    }
+                    letterMaps.Add(new(word, color, converter));
 
-                    letterMaps.Add(new(' ', 0, Color.Black));
+                    letterMaps.Add(new(" ", Color.Black, converter));
                 }
 
                 BinaryColorMap[] binaryColorMaps = letterMaps.SelectMany(x => x.GetBinaryColorMaps()).ToArray();
@@ -127,7 +148,7 @@ namespace WLEDController.UI.Model
                 {
                     for (int offset = 0; offset < loopCount; offset++)
                     {
-                        if(cancellationTokenSource.IsCancellationRequested)
+                        if (cancellationTokenSource.IsCancellationRequested)
                         {
                             break;
                         }
@@ -154,12 +175,12 @@ namespace WLEDController.UI.Model
                                 leds[i].Blue = binaryColorMaps[binaryColorIndex].BinaryValue ? binaryColorMaps[binaryColorIndex].Color.B : (byte)0;
 
                                 binaryColorIndex++;
-
                             }
                             catch (Exception)
                             {
                                 throw;
-                            }                        }
+                            }
+                        }
 
                         client.Send(leds);
                         await Task.Delay(Delay);
@@ -176,39 +197,6 @@ namespace WLEDController.UI.Model
             StartEnabled = true;
         }
 
-        private class LetterMap
-        {
-            public LetterMap(char letter, byte byteValue, Color color)
-            {
-                Letter = letter;
-                ByteValue = byteValue;
-                Color = color;
-
-                string binaryString = Convert.ToString(byteValue, 2).PadLeft(8, '0');
-                BinaryValue = new bool[8];
-
-                for (int i = 0; i < 8; i++)
-                {
-                    BinaryValue[i] = binaryString[i] == '1';
-                }
-            }
-
-            public Color Color { get; }
-
-            public char Letter { get; }
-
-            public bool[] BinaryValue { get; }
-            public byte ByteValue { get; }
-
-            public IEnumerable<BinaryColorMap> GetBinaryColorMaps()
-            {
-                foreach (bool b in BinaryValue)
-                {
-                    yield return new(Color, b);
-                }
-            }
-        }
-
         private struct BinaryColorMap
         {
             public BinaryColorMap(Color color, bool binaryValue)
@@ -217,8 +205,34 @@ namespace WLEDController.UI.Model
                 BinaryValue = binaryValue;
             }
 
-            public Color Color { get; }
             public bool BinaryValue { get; }
+
+            public Color Color { get; }
+        }
+
+        private class WordMap
+        {
+            public WordMap(string word, Color color, ITextConverter textConverter)
+            {
+                Word = word;
+                Color = color;
+
+                BinaryValue = textConverter.ConvertText(word);
+            }
+
+            public bool[] BinaryValue { get; }
+
+            public Color Color { get; }
+
+            public string Word { get; }
+
+            public IEnumerable<BinaryColorMap> GetBinaryColorMaps()
+            {
+                foreach (bool b in BinaryValue)
+                {
+                    yield return new(Color, b);
+                }
+            }
         }
     }
 }
