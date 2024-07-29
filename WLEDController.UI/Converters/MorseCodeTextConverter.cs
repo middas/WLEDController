@@ -7,6 +7,8 @@ namespace WLEDController.UI.Converters
         private static readonly bool[] dash = [true, true, true];
         private static readonly bool dot = true;
 
+        private static readonly bool[] letterSpacing = [s, s, s];
+
         private static readonly Dictionary<char, bool[]> morseCodeLookup = new()
         {
             {'A', [dot, s, ..dash] },
@@ -63,7 +65,7 @@ namespace WLEDController.UI.Converters
         };
 
         private static readonly bool s = false;
-        private static readonly bool[] letterSpacing = [s, s, s];
+        private static readonly bool[] start = [.. dash, s, dot, s, .. dash, s, dot, s, .. dash, .. morseCodeLookup[' ']];
 
         public BitArray ConvertText(string value)
         {
@@ -84,7 +86,7 @@ namespace WLEDController.UI.Converters
 
         public BitArray Start()
         {
-            return new BitArray([.. dash, s, dot, s, .. dash, s, dot, s, .. dash, .. morseCodeLookup[' ']]);
+            return new BitArray(start);
         }
     }
 }
