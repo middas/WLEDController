@@ -1,8 +1,10 @@
-﻿namespace WLEDController.UI.Converters
+﻿using System.Collections;
+
+namespace WLEDController.UI.Converters
 {
     internal class MorseCodeTextConverter : ITextConverter
     {
-        private static readonly bool[] dash = [.. dash];
+        private static readonly bool[] dash = [true, true, true];
         private static readonly bool dot = true;
 
         private static readonly Dictionary<char, bool[]> morseCodeLookup = new()
@@ -63,21 +65,21 @@
         private static readonly bool s = false;
         private static bool[] letterSpacing = [s, s, s];
 
-        public bool[] ConvertText(string value)
+        public BitArray ConvertText(string value)
         {
             if (value[0] == (char)255)
             {
-                return [..dash, s, dot, s, ..dash, s, dot, s, ..dash];
+                return new BitArray([..dash, s, dot, s, ..dash, s, dot, s, ..dash]);
             }
 
-            return value.ToUpperInvariant().Select(x =>
+            return new BitArray(value.ToUpperInvariant().Select(x =>
             {
                 if (morseCodeLookup.TryGetValue(x, out bool[]? v))
                 {
                     return v;
                 }
                 return [];
-            }).Aggregate(new bool[0], (cur, next) =>
+            }).Aggregate(Array.Empty<bool>(), (cur, next) =>
             {
                 var list = cur.ToList();
                 if (list.Count > 0)
@@ -85,8 +87,8 @@
                     list.AddRange(letterSpacing);
                 }
                 list.AddRange(next);
-                return list.ToArray();
-            });
+                return [.. list];
+            }));
         }
     }
 }

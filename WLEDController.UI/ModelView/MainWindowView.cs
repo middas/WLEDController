@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections;
+using System.ComponentModel;
 using System.Drawing;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -126,16 +127,16 @@ namespace WLEDController.UI.ModelView
                     leds[i] = new(i, Color.Black);
                 }
 
-                string[] words = Text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                List<WordMap> wordMaps = [new WordMap(((char)255).ToString(), Color.Teal, new BinaryTextConverter())];
-                Random random = new();
-
                 ITextConverter converter = TextConverter switch
                 {
                     TextConverter.Binary => new BinaryTextConverter(),
                     TextConverter.MorseCode => new MorseCodeTextConverter(),
                     _ => throw new NotImplementedException()
                 };
+
+                string[] words = Text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                List<WordMap> wordMaps = [new WordMap(((char)255).ToString(), Color.Teal, converter)];
+                Random random = new();
 
                 foreach (string word in words)
                 {
@@ -202,38 +203,24 @@ namespace WLEDController.UI.ModelView
             StartEnabled = true;
         }
 
-        private readonly struct LightColorMap
+        private readonly struct LightColorMap(Color color, bool onValue)
         {
-            public LightColorMap(Color color, bool onValue)
-            {
-                Color = color;
-                OnValue = onValue;
-            }
+            public Color Color { get; } = color;
 
-            public Color Color { get; }
-
-            public bool OnValue { get; }
+            public bool OnValue { get; } = onValue;
         }
 
-        private class WordMap
+        private class WordMap(string word, Color color, ITextConverter textConverter)
         {
-            public WordMap(string word, Color color, ITextConverter textConverter)
-            {
-                Word = word;
-                Color = color;
+            public Color Color { get; } = color;
 
-                LightValue = textConverter.ConvertText(word);
-            }
+            public BitArray LightValues { get; } = textConverter.ConvertText(word);
 
-            public Color Color { get; }
-
-            public bool[] LightValue { get; }
-
-            public string Word { get; }
+            public string Word { get; } = word;
 
             public IEnumerable<LightColorMap> GetLightColorMaps()
             {
-                foreach (bool b in LightValue)
+                foreach (bool b in LightValues)
                 {
                     yield return new(Color, b);
                 }

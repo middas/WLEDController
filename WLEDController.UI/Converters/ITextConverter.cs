@@ -1,7 +1,9 @@
-﻿namespace WLEDController.UI.Converters
+﻿using System.Collections;
+
+namespace WLEDController.UI.Converters
 {
     internal interface ITextConverter
     {
-        bool[] ConvertText(string value);
+        BitArray ConvertText(string value);
     }
 }
