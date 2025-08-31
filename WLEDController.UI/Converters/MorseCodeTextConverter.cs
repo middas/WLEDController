@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using System.Drawing;
+using WLEDController.UI.Models;
 
 namespace WLEDController.UI.Converters
 {
@@ -64,7 +66,22 @@ namespace WLEDController.UI.Converters
         private static readonly bool s = false;
         private static readonly bool[] start = [.. dash, s, dot, s, .. dash, s, dot, s, .. dash, .. morseCodeLookup[' ']];
 
-        public BitArray ConvertText(string value)
+        private IDisplayMethod? displayMethod;
+
+        public IDisplayMethod DisplayMethod
+        {
+            get
+            {
+                if (displayMethod is null)
+                {
+                    displayMethod = new ScrollingDisplayMethod();
+                }
+
+                return displayMethod;
+            }
+        }
+
+        public BitArray ConvertWord(string value)
         {
             return new BitArray(value.ToUpperInvariant().Select(x =>
             {
@@ -79,6 +96,23 @@ namespace WLEDController.UI.Converters
                 list.AddRange(next);
                 return [.. list];
             }));
+        }
+
+        public IEnumerable<WordMap> GetWordMaps(string value)
+        {
+            string[] words = value.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            List<WordMap> wordMaps = [];
+            Random random = new();
+
+            foreach (string word in words)
+            {
+                Color color = Color.FromArgb(random.Next(256), random.Next(256), random.Next(256));
+                wordMaps.Add(new(word, color, ConvertWord(word)));
+
+                wordMaps.Add(new(" ", Color.Black, ConvertWord(" ")));
+            }
+
+            return wordMaps;
         }
 
         public BitArray Start()

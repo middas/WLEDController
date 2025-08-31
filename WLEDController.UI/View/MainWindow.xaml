@@ -39,6 +39,7 @@
             </StackPanel.Resources>
             <RadioButton Content="Binary" IsChecked="{Binding TextConverter, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static m:TextConverter.Binary}}" />
             <RadioButton Content="Morse Code" IsChecked="{Binding TextConverter, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static m:TextConverter.MorseCode}}" />
+            <RadioButton Content="Tap" IsChecked="{Binding TextConverter, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static m:TextConverter.Tap}}" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
             <Button Command="{Binding OnStart}" IsEnabled="{Binding StartEnabled}">Start</Button>
