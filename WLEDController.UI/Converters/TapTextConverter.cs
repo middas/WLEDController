@@ -136,7 +136,7 @@ namespace WLEDController.UI.Converters
             foreach (string word in words)
             {
                 Color colorRow = Color.FromArgb(random.Next(256), random.Next(256), random.Next(256));
-                Color colorColumn = Color.FromArgb(random.Next(256), random.Next(256), random.Next(256));
+                Color colorColumn = Color.FromArgb(255 - colorRow.R, 255 - colorRow.G, 255 - colorRow.B);
 
                 wordMaps.AddRange(word.SelectMany(c =>
                 {
